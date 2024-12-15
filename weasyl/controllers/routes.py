@@ -17,7 +17,7 @@ from weasyl.controllers import (
     settings,
     two_factor_auth,
     user,
-    weasyl_collections, well_known,
+    weasyl_collections, well_known, activitypub,
 )
 from weasyl import oauth2
 
@@ -349,6 +349,7 @@ routes = (
 
     # Routes for activitypub
     Route("/.well-known/webfinger", "well_known_webfinger", well_known.webfinger),
+    Route("/keys/{key_id}", "keys_keyid", activitypub.key_handler),
     # handled in "profile_" Route("/users/{username}", "activity_pub_user_profile", activitypub.webfinger),
 )
 

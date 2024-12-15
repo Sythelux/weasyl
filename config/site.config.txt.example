@@ -33,3 +33,6 @@ enforce = true
 [secret_keys]
 # can be generated with `secrets.token_urlsafe(32) + "="`
 suggested_tag_undo = 5Bf8KDzoCGyv6Cfbb7P6wI70bEwYd5EFGiBYa1hdxUc=
+
+[activitypub]
+keys_path = example_keys

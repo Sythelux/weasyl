@@ -10,7 +10,7 @@ import pkgutil
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Literal
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urlencode, urljoin, urlparse
 
 import arrow
 from pyramid.threadlocal import get_current_request
@@ -36,9 +36,7 @@ from weasyl import turnstile
 from weasyl.config import config_obj, config_read_setting
 from weasyl.error import WeasylError
 
-
 _shush_pyflakes = [sqlalchemy.orm]
-
 
 reload_templates = bool(os.environ.get('WEASYL_RELOAD_TEMPLATES'))
 reload_assets = bool(os.environ.get('WEASYL_RELOAD_ASSETS'))
@@ -141,7 +139,6 @@ def serializable_retry(action, limit=16):
 with open(os.path.join(macro.MACRO_APP_ROOT, "version.txt")) as f:
     CURRENT_SHA = f.read().strip()
 
-
 # Caching all templates. Parsing templates is slow; we don't need to do it all
 # the time and there's plenty of memory for storing the compiled templates.
 _template_cache = {}
@@ -231,6 +228,14 @@ def get_userid():
     Returns the userid corresponding to the current request, if any.
     """
     return get_current_request().userid
+
+
+def get_domain():
+    """
+    returns the domain based on the _ORIGIN variable. opposed to get_address() this is available before a request was made
+    Returns: domain
+    """
+    return urlparse(_ORIGIN).netloc
 
 
 _ORIGIN = config_obj.get('general', 'origin')
@@ -648,7 +653,8 @@ def private_messages_unread_count(userid: int) -> int:
         "SELECT COUNT(*) FROM message WHERE otherid = %(user)s AND settings ~ 'u'", user=userid)
 
 
-notification_count_time = metrics.CachedMetric(Histogram("weasyl_notification_count_fetch_seconds", "notification counts fetch time", ["cached"]))
+notification_count_time = metrics.CachedMetric(
+    Histogram("weasyl_notification_count_fetch_seconds", "notification counts fetch time", ["cached"]))
 
 
 @metrics.separate_timing
@@ -688,7 +694,8 @@ def page_header_info_invalidate_multi(userids):
 
 
 def get_max_post_rating(userid):
-    return max((key.rating for key, count in posts_count(userid, friends=True).items() if count), default=ratings.GENERAL.code)
+    return max((key.rating for key, count in posts_count(userid, friends=True).items() if count),
+               default=ratings.GENERAL.code)
 
 
 def _is_sfw_locked(userid):
@@ -1070,9 +1077,9 @@ def webp_thumb_for_sub(submission):
     user_id = get_userid()
     profile_settings = get_profile_settings(user_id)
     disable_custom_thumb = (
-        profile_settings.disable_custom_thumbs and
-        submission.get('subtype', 9999) < 2000 and
-        submission['userid'] != user_id
+            profile_settings.disable_custom_thumbs and
+            submission.get('subtype', 9999) < 2000 and
+            submission['userid'] != user_id
     )
 
     if not disable_custom_thumb and 'thumbnail-custom' in submission['sub_media']:

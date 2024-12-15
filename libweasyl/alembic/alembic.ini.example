@@ -52,3 +52,6 @@ formatter = generic
 [formatter_generic]
 format = %(levelname)-5.5s [%(name)s] %(message)s
 datefmt = %H:%M:%S
+
+[activitypub]
+keys_path = example_keys

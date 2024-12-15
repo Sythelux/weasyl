@@ -18,11 +18,12 @@ def webfinger(request):
         username = resource.split('@')[1].replace('acct:', '')
     else:
         username = resource.split('@')[0].replace('acct:', '')
-    define.append_to_log("well_known.webfinger", username=username)
+    define.append_to_log(__name__, username=username)
     username = request.matchdict.get('name', username)
     userid = define.get_int(request.params.get('userid'))
     url = define.absolutify_url("")
-    domain = url.replace("http://", "").replace("https://", "")
+
+    domain = define.get_address()
     user = profile.resolve(request.userid, userid, username)
     # we could also support submissions/journals/collections/characters individually as actors in the future
     userprofile = profile.select_profile(user, viewer=request.userid)

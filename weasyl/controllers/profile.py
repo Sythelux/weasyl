@@ -1,5 +1,10 @@
+import asyncio
+import json
+import pickle
+
 from pyramid import httpexceptions
 from pyramid.response import Response
+from webob.acceptparse import AcceptValidHeader
 
 from libweasyl import staff
 from libweasyl.text import markdown_excerpt
@@ -8,6 +13,7 @@ from weasyl import (
     character, collection, commishinfo, define, favorite, folder,
     followuser, frienduser, journal, media, profile, shout, submission,
     pagination)
+from weasyl.controllers import activitypub
 from weasyl.controllers.decorators import moderator_only
 from weasyl.error import WeasylError
 
@@ -56,6 +62,16 @@ def profile_(request):
 
     if not request.userid and "h" in userprofile['config']:
         raise WeasylError('noGuests')
+
+    define.append_to_log(__name__, level="debug", msg=request.headers.get("Accept"))
+    if ("application/activity+json" in request.headers.get("Accept")
+            or "application/ld+json" in request.headers.get("Accept")):
+        # alternative in pyramid is to use renderer, but  we have those tuples going on
+        loop = asyncio.get_event_loop()
+        coroutine = activitypub.actvitypub_profile(userprofile)
+        response = loop.run_until_complete(coroutine)
+        print(response)
+        return response
 
     username = userprofile["username"]
     canonical_path = request.route_path("profile_tilde", name=define.get_sysname(username))
@@ -181,8 +197,8 @@ def submissions_(request):
     page = define.common_page_start(request.userid, title=page_title)
 
     url_format = "/submissions/{username}?%s{folderquery}".format(
-                 username=define.get_sysname(userprofile['username']),
-                 folderquery="&folderid=%d" % folderid if folderid else "")
+        username=define.get_sysname(userprofile['username']),
+        folderquery="&folderid=%d" % folderid if folderid else "")
     result = pagination.PaginatedResult(
         submission.select_list, submission.select_count, 'submitid', url_format, request.userid, rating,
         limit=60, otherid=otherid, folderid=folderid, backid=define.get_int(backid),
