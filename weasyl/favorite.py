@@ -10,6 +10,7 @@ from weasyl import macro as m
 from weasyl import media
 from weasyl import welcome
 from weasyl.error import WeasylError
+from weasyl.users import Username
 
 
 def select_submit_query(userid, rating, otherid=None, backid=None, nextid=None):
@@ -117,7 +118,7 @@ def select_char(userid, rating, limit, otherid, backid=None, nextid=None):
         "unixtime": i[3],
         "userid": i[4],
         "username": i[5],
-        "sub_media": character.fake_media_items(i[0], i[4], d.get_sysname(i[5]), i[6]),
+        "sub_media": character.fake_media_items(i[0], i[4], Username.from_stored(i[5]).sysname, i[6]),
     } for i in d.execute("".join(statement))]
 
     return query[::-1] if backid else query
@@ -125,7 +126,7 @@ def select_char(userid, rating, limit, otherid, backid=None, nextid=None):
 
 def select_journal(userid, rating, limit, otherid, backid=None, nextid=None):
     statement = ["""
-        SELECT jo.journalid, jo.title, jo.rating, fa.unixtime, jo.userid, pr.username, pr.config
+        SELECT jo.journalid, jo.title, jo.rating, fa.unixtime, jo.userid, pr.username, jo.content
         FROM favorite fa
             INNER JOIN journal jo ON fa.targetid = jo.journalid
             INNER JOIN profile pr ON jo.userid = pr.userid
@@ -166,6 +167,7 @@ def select_journal(userid, rating, limit, otherid, backid=None, nextid=None):
         "unixtime": i[3],
         "userid": i[4],
         "username": i[5],
+        "content": i.content,
     } for i in d.execute("".join(statement))]
     media.populate_with_user_media(query)
 

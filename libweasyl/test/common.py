@@ -1,7 +1,9 @@
 import itertools
+from contextlib import contextmanager
 
 import arrow
 import py.path
+from psycopg2.extensions import quote_ident
 
 from libweasyl.models import content, tables, users
 from libweasyl import media, ratings
@@ -71,3 +73,31 @@ def make_submission(db):
     db.add(sub)
     db.flush()
     return sub
+
+
+@contextmanager
+def autocommit_cursor(engine):
+    conn = engine.raw_connection()
+    driver_conn = conn.driver_connection
+    assert driver_conn.autocommit is False
+    try:
+        driver_conn.set_session(autocommit=True)
+        with driver_conn.cursor() as cur:
+            yield cur
+    finally:
+        driver_conn.set_session(autocommit=False)
+        conn.close()  # return connection to the pool
+
+
+def clear_database(engine):
+    """
+    Delete all rows from all tables in the test database.
+    """
+    with autocommit_cursor(engine) as cur:
+        cur.execute(
+            "SET CONSTRAINTS ALL DEFERRED;"
+            + "".join(
+                f"DELETE FROM {quote_ident(table_key, cur.connection)};"
+                for table_key in tables.metadata.tables
+            )
+        )

@@ -29,13 +29,13 @@ $def with (targetid, feature, query, myself)
 
     $if feature == 'submit' and myself and myself['userid'] in staff.MODS:
       <span class="tag-actions">
-        <a class="typeface-default color-c" href="/submission/tag-history/${query['submitid']}">History</a>
+        <a href="/submission/tag-history/${query['submitid']}">History</a>
       </span>
   </div>
 
   $if edit_type != 'none':
     <div class="tags-manage" hidden>
-      <form class="tags-form" action="/submit/tags" method="POST">
+      <form class="tags-form" action="/submit/tags" method="post">
         <input type="hidden" name="${feature}id" value="${targetid}" />
 
         <textarea class="input tags-textarea" name="tags">${" ".join(tags.artist if edit_type == 'edit' else tags.own_suggested)}</textarea>

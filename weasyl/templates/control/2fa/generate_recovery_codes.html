@@ -27,7 +27,7 @@ $:{RENDER("common/stage_title.html", ["Generate Recovery Codes", "Two-Factor Aut
     </p>
   </div>
 
-  <form method="POST" class="form skinny clear" action="/control/2fa/generate_recovery_codes">
+  <form method="post" class="form skinny clear" action="/control/2fa/generate_recovery_codes">
     <h3>Your new recovery codes will be:</h3>
     <ol>
       $for code in tfa_recovery_codes:
@@ -46,7 +46,6 @@ $:{RENDER("common/stage_title.html", ["Generate Recovery Codes", "Two-Factor Aut
     <label><input class="checkbox" type="checkbox" name="verify" required /> I confirm that I have saved the above new recovery codes.</label>
 
     <div style="padding-top: 1em;">
-      <a class="button negative" href="/control/2fa/status">Cancel</a>
       <button class="button positive">Save New Recovery Codes</button>
     </div>
   </form>

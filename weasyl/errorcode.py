@@ -71,6 +71,7 @@ error_messages = {
         "Consequently, registrations from this domain have been blacklisted."),
     "emailIncorrect": "The email you entered is not associated with the account you specified.",
     "emailInvalid": "The email you entered does not appear to be valid.",
+    "embedlinkFailed": "Weasyl failed to load the embed link you entered. It might be a broken or unsupported link, or this might be a temporary communication failure between Weasyl and the other service. Please check your link and try again later.",
     "embedlinkInvalid": "The embed link you entered does not point to a valid resource or supported service.",
     "FeatureDisabled": "This feature has been temporarily disabled.",
     "FileType": "The file you uploaded is not of a valid type.",
@@ -81,6 +82,7 @@ error_messages = {
         "forgot password page and resubmit the form, or you may have copied the link incorrectly."),
     "FriendsOnly": friends,
     "characterRecordMissing": charid,
+    "globalLimit": f"Weasyl hit an internal limit unexpectedly and can’t process your request right now. Please report this bug to [{m.MACRO_SUPPORT_ADDRESS}](mailto:{m.MACRO_SUPPORT_ADDRESS}), and try again later.",
     "googleDocsEmbedLinkInvalid": (
         "The link you provided isn’t a valid Google Docs embed link."
         " If you’re not sure which link to use, we have [a guide on publishing documents from Google Docs](/help/google-drive-embed) that might help."
@@ -124,12 +126,14 @@ error_messages = {
     "streamDurationNotSet": "Please set a stream length.",
     "streamDurationOutOfRange": "Please enter a number up to 360 minutes for stream length.",
     "streamLocationNotSet": "Please set a stream location.",
+    "streamLocationInvalid": "The stream location you entered is not a valid link.",
     "submissionRecordMissing": submitid,
     "submitSizeExceedsLimit": (
         "The submission file you uploaded exceeds the allowed filesize for this submission category."),
     "submitSizeZero": "You must provide a submission file.",
     "submitType": "The submission file you uploaded is not a valid filetype for this submission category.",
     "TagBlocked": "This submission's assigned tags suggest that it may contain content you do not wish to view.",
+    "tagTooLong": "A tag you entered was too long (>100 characters). Please check that your tags are formatted correctly (separated with commas or spaces).",
     "TargetRecordMissing": "This content doesn't seem to exist in our database.",
     "thumbSizeExceedsLimit": (
         "The thumbnail file you uploaded exceeds the allowed filesize for this submission category."),
@@ -155,6 +159,8 @@ error_messages = {
     "UserIgnored": "This content was posted by a user you have chosen to ignore.",
     "userRecordMissing": userid,
     "usernameChangedTooRecently": "You can't change your username within 30 days of a previous change.",
+    "usernameBanned": (
+        "The username you entered is reserved. Please choose a different username."),
     "usernameExists": "The username you entered is already registered by another user.",
     "usernameInvalid": (
         "The username you entered is not valid. Usernames must contain one or more alphanumeric characters."),
@@ -171,6 +177,7 @@ error_messages = {
 # put it here. Errors without a corresponding entry in this list will use
 # the default status code.
 error_status_code = {
+    "globalLimit": 503,
     'InsufficientPermissions': 403,
     "userRecordMissing": 404,
     "submissionRecordMissing": 404,
@@ -180,11 +187,4 @@ error_status_code = {
     "signed": 403,
     "unsigned": 403,
     "token": 403
-}
-
-
-login_errors = {
-    "invalid": "The username or password provided was incorrect.",
-    "banned": "Your account has been permanently banned.",
-    "suspended": "Your account has been temporarily suspended.",
 }
